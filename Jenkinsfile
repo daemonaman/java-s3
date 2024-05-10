@@ -26,9 +26,13 @@ pipeline {
                                  }
 		       }
 		}
-		       steps {
+		stage('testing the build') {
+                        steps {
                                  sh 'sudo docker run -dit --name java-container$BUILD_TAG -p 8090:8080 daemonaman/java-app:BUILD_TAG'
-		       }
+                       }
+
+		}
+
         	}
 
 }
