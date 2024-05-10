@@ -18,5 +18,17 @@ pipeline {
 				 sh 'sudo docker tag java-app:$BUILD_TAG daemonaman/java-app:$BUILD_TAG'
 		       }  
 		}
-	}
+		stage('push on docker-hub') {
+                       steps {
+                                 withCredentials([string(credentialsId: 'docker_hub_pass', variable: 'docker_hub_pass_var')]) {
+                                 sh 'sudo docker login -u daemonaman -p ${docker_hub_pass_var}'
+				 sh 'sudo docker push daemonaman/java-app:$BUILD_TAG'
+                                 }
+		       }
+		}
+		       steps {
+                                 sh 'sudo docker run -dit --name java-container$BUILD_TAG -p 8090:8080 daemonaman/java-app:BUILD_TAG'
+		       }
+        	}
+
 }
