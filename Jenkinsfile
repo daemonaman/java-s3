@@ -20,7 +20,7 @@ pipeline {
 		}
 		stage('push on docker-hub') {
                        steps {
-                                 withCredentials([string(credentialsId: 'docker_hub_pass', variable: 'docker_hub_pass_var')]) {
+                                 withCredentials([string(credentialsId: 'docker_hub_id1', variable: 'docker_hub_pass_var')]) {
                                  sh 'sudo docker login -u daemonaman -p ${docker_hub_pass_var}'
 				 sh 'sudo docker push daemonaman/java-app:$BUILD_TAG'
                                  }
