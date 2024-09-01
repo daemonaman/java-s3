@@ -9,7 +9,7 @@ pipeline {
 		stage('build the code') {
                        steps {
                                  sh 'sudo mvn dependency:purge-local-repository'
-				 sh 'sudo mvn clean package'
+				 sh 'sudo mvn clean package -U'
 		       }
 		}
 		stage('building docker image') {
