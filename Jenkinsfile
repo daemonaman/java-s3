@@ -16,7 +16,7 @@ pipeline {
 }
         stage('Build') {
             steps {
-                mvn build 
+                sh 'sudo mvn clean package'
             }
         }
 
