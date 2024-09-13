@@ -16,7 +16,7 @@ pipeline {
 }
         stage('Build') {
             steps {
-                Maven build 
+                mvn build 
             }
         }
 
