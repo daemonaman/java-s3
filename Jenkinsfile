@@ -29,7 +29,7 @@ pipeline {
                     aws configure set region ${AWS_REGION}
 
                     # Replace "artifact-file-name" with your actual file name
-                    aws s3 cp target/artifact-file-name s3://${S3_BUCKET}/
+                    aws s3 cp target/java-web-app-1.0.war s3://${S3_BUCKET}/
                 """
             }
         }
