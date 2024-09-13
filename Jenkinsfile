@@ -5,13 +5,13 @@ pipeline {
         // Define your AWS credentials stored in Jenkins
         AWS_ACCESS_KEY_ID = credentials('aws-access-key-id') // Add Jenkins credentials ID here
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key') // Add Jenkins credentials ID here
-        S3_BUCKET = 'your-s3-bucket-name' // S3 bucket name
-        AWS_REGION = 'your-region' // Example: us-east-1
+        S3_BUCKET = 'artifact-java123' // S3 bucket name
+        AWS_REGION = 'ap-south-1' // Example: us-east-1
     }
     stages {
         stage('Pull code from git') {
             steps {
-                git branch: 'main', credentialsID:'jenkins',url:'git repository url'
+                git branch: 'main', url: 'https://github.com/daemonaman/java-s3.git'
      }
 }
         stage('Build') {
