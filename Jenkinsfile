@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Define your AWS credentials stored in Jenkins
         AWS_ACCESS_KEY_ID = credentials('aws-access-key-id') // Add Jenkins credentials ID here
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key') // Add Jenkins credentials ID here
+        AWS_SECRET_ACCESS_KEY = credentials('aws-access-key-id') // Add Jenkins credentials ID here
         S3_BUCKET = 'artifact-java123' // S3 bucket name
         AWS_REGION = 'ap-south-1' // Example: us-east-1
     }
