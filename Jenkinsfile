@@ -17,6 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'mvn clean package'
+                sh 'zip java-web-app-1.0.war.zip var/lib/jenkins/workspace/java/target/java-web-app-1.0.war
             }
         }
 
