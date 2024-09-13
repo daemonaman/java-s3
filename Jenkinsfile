@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Pull code from git') {
             steps {
-                git branch: 'dev', credentialsID:'jenkins',url:'git repository url'
+                git branch: 'main', credentialsID:'jenkins',url:'git repository url'
      }
 }
         stage('Build') {
