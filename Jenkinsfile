@@ -1,63 +1,44 @@
 pipeline {
-        agent any
-	stages {
-                stage('pull code from git repo') {
-                       steps {
-                                 git branch: 'main', url: 'https://github.com/daemonaman/java-app.git'
-		       }
-		}
-		stage('build the code') {
-                       steps {
-                                 sh 'sudo mvn dependency:purge-local-repository'
-				 sh 'sudo mvn clean package'
-		       }
-		}
-		stage('building docker image') {
-                       steps {
-                                 sh 'sudo docker build -t java-app:$BUILD_TAG .'
-				 sh 'sudo docker tag java-app:$BUILD_TAG daemonaman/java-app:$BUILD_TAG'
-		       }  
-		}
-		stage('push on docker-hub') {
-                       steps {
-                                 withCredentials([string(credentialsId: 'docker_hub_id1', variable: 'docker_hub_pass_var')]) {
-                                 sh 'sudo docker login -u daemonaman -p ${docker_hub_pass_var}'
-				 sh 'sudo docker push daemonaman/java-app:$BUILD_TAG'
-                                 }
-		       }
-		}
-		stage('testing the build') {
-                        steps {
-                                 sh 'sudo docker run -dit --name java-container$BUILD_TAG -p 8090:8080 daemonaman/java-app:$BUILD_TAG'
-                       }
+    agent any
 
-		}
-		stage ("QAT Testing"){
-			steps {
-				retry(5) {
-					script {
-						sh 'sudo curl --silent http://52.66.169.148:8090/java-web-app/ | grep -i -E "(india|sr)"'
-					}
-				}
-			}
-		}
-		stage ("Approval from QAT"){
-			steps {
-				script {
-					Boolean userInput = input(id: 'Proceed1', message: 'Do you want to Promote this build?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']])
-                				echo 'userInput: ' + userInput
-				}
-			}
-		}
-		stage ("Prod ENV"){
-			steps{
-				sshagent(credentials:['docker_slave_id']) {
-			    	 	sh "ssh -o StrictHostKeyChecking=no ubuntu@13.201.88.116 sudo docker run  -dit  -p  :8080  daemonaman/java-app:$BUILD_TAG"
-				}
-			}
-		}
+    environment {
+        // Define your AWS credentials stored in Jenkins
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id') // Add Jenkins credentials ID here
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key') // Add Jenkins credentials ID here
+        S3_BUCKET = 'your-s3-bucket-name' // S3 bucket name
+        AWS_REGION = 'your-region' // Example: us-east-1
+    }
+    stages {
+        stage('Pull code from git') {
+            steps {
+                git branch: 'dev', credentialsID:'jenkins',url:'git repository url'
+     }
+}
+        stage('Build') {
+            steps {
+                Maven build 
+            }
+        }
 
+        stage('Archive Artifact to S3') {
+            steps {
+                // Upload the file to S3 using AWS CLI
+                sh """
+                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+                    aws configure set region ${AWS_REGION}
 
-        	}
+                    # Replace "artifact-file-name" with your actual file name
+                    aws s3 cp target/artifact-file-name s3://${S3_BUCKET}/
+                """
+            }
+        }
+    }
 
+    post {
+        always {
+            echo 'Cleaning up...'
+            // You can add any cleanup steps if needed
+        }
+    }
 }
